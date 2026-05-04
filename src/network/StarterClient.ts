@@ -5,7 +5,16 @@ import type {
   HistoryCreateRequest,
   HistoryTotalResponse,
   HistoryUpdateRequest,
+  LeaderboardResponse,
+  PretendOffer,
+  PretendOfferCreateRequest,
+  PretendOfferUpdateRequest,
+  Property,
+  PropertyPriceHistoryResponse,
+  PropertySearchResponse,
+  Transaction,
   User,
+  UserProfile,
 } from '@sudobility/mogulgame_types';
 import type { FirebaseIdToken } from '../types';
 import {
@@ -246,22 +255,6 @@ export class StarterClient {
 
   // --- Total (public) ---
 
-  /**
-   * Fetches the global total count of all histories.
-   *
-   * This is a public endpoint that does not require authentication.
-   *
-   * @returns The total count wrapped in a {@link BaseResponse}
-   * @throws {Error} If the response does not match the expected shape
-   *
-   * @example
-   * ```typescript
-   * const response = await client.getHistoriesTotal();
-   * if (response.success && response.data) {
-   *   console.log(`Total histories: ${response.data.total}`);
-   * }
-   * ```
-   */
   async getHistoriesTotal(options?: {
     timeout?: number;
   }): Promise<BaseResponse<HistoryTotalResponse>> {
@@ -273,6 +266,165 @@ export class StarterClient {
     return validateResponse<HistoryTotalResponse>(
       response.data,
       'getHistoriesTotal'
+    );
+  }
+
+  // --- Properties (public) ---
+
+  async searchProperties(
+    params: Record<string, string>,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PropertySearchResponse>> {
+    const query = new URLSearchParams(params).toString();
+    const url = buildUrl(this.baseUrl, `/api/v1/properties/search?${query}`);
+    const response = await this.networkClient.get(url, {
+      headers: createHeaders(),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PropertySearchResponse>(
+      response.data,
+      'searchProperties'
+    );
+  }
+
+  async getProperty(
+    propertyId: string,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<Property>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/properties/${propertyId}`);
+    const response = await this.networkClient.get(url, {
+      headers: createHeaders(),
+      timeout: options?.timeout,
+    });
+    return validateResponse<Property>(response.data, 'getProperty');
+  }
+
+  async getPropertyHistory(
+    propertyId: string,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PropertyPriceHistoryResponse>> {
+    const url = buildUrl(
+      this.baseUrl,
+      `/api/v1/properties/${propertyId}/history`
+    );
+    const response = await this.networkClient.get(url, {
+      headers: createHeaders(),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PropertyPriceHistoryResponse>(
+      response.data,
+      'getPropertyHistory'
+    );
+  }
+
+  // --- Offers (auth required) ---
+
+  async getOffers(
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PretendOffer[]>> {
+    const url = buildUrl(this.baseUrl, '/api/v1/offers');
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PretendOffer[]>(response.data, 'getOffers');
+  }
+
+  async getOffer(
+    offerId: string,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PretendOffer>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/offers/${offerId}`);
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PretendOffer>(response.data, 'getOffer');
+  }
+
+  async createOffer(
+    data: PretendOfferCreateRequest,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PretendOffer>> {
+    const url = buildUrl(this.baseUrl, '/api/v1/offers');
+    const response = await this.networkClient.post(url, data, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PretendOffer>(response.data, 'createOffer');
+  }
+
+  async updateOffer(
+    offerId: string,
+    data: PretendOfferUpdateRequest,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PretendOffer>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/offers/${offerId}`);
+    const response = await this.networkClient.put(url, data, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<PretendOffer>(response.data, 'updateOffer');
+  }
+
+  async cancelOffer(
+    offerId: string,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<null>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/offers/${offerId}`);
+    const response = await this.networkClient.delete(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<null>(response.data, 'cancelOffer');
+  }
+
+  // --- User Profile (auth required) ---
+
+  async getUserProfile(
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<UserProfile>> {
+    const url = buildUrl(this.baseUrl, '/api/v1/users/me');
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<UserProfile>(response.data, 'getUserProfile');
+  }
+
+  async getTransactions(
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<Transaction[]>> {
+    const url = buildUrl(this.baseUrl, '/api/v1/users/me/transactions');
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse<Transaction[]>(response.data, 'getTransactions');
+  }
+
+  // --- Leaderboard (public) ---
+
+  async getLeaderboard(
+    params?: Record<string, string>,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<LeaderboardResponse>> {
+    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+    const url = buildUrl(this.baseUrl, `/api/v1/leaderboard${query}`);
+    const response = await this.networkClient.get(url, {
+      headers: createHeaders(),
+      timeout: options?.timeout,
+    });
+    return validateResponse<LeaderboardResponse>(
+      response.data,
+      'getLeaderboard'
     );
   }
 }

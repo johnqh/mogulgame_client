@@ -43,9 +43,29 @@ export const DEFAULT_GC_TIME = 30 * 60 * 1000;
  */
 export const QUERY_KEYS = {
   /** Cache key for a user's history list. */
-  histories: (userId: string) => ['starter', 'histories', userId] as const,
+  histories: (userId: string) => ['mogulgame', 'histories', userId] as const,
   /** Cache key for the global histories total (public endpoint). */
-  historiesTotal: () => ['starter', 'histories', 'total'] as const,
+  historiesTotal: () => ['mogulgame', 'histories', 'total'] as const,
   /** Cache key for a user profile. */
-  user: (userId: string) => ['starter', 'user', userId] as const,
+  user: (userId: string) => ['mogulgame', 'user', userId] as const,
+  /** Cache key for property search results. */
+  propertySearch: (params: string) =>
+    ['mogulgame', 'properties', 'search', params] as const,
+  /** Cache key for a single property. */
+  property: (propertyId: string) =>
+    ['mogulgame', 'properties', propertyId] as const,
+  /** Cache key for a property's price history. */
+  propertyHistory: (propertyId: string) =>
+    ['mogulgame', 'properties', propertyId, 'history'] as const,
+  /** Cache key for user's offers. */
+  offers: () => ['mogulgame', 'offers'] as const,
+  /** Cache key for a single offer. */
+  offer: (offerId: string) => ['mogulgame', 'offers', offerId] as const,
+  /** Cache key for current user profile. */
+  userProfile: () => ['mogulgame', 'userProfile'] as const,
+  /** Cache key for user transactions. */
+  transactions: () => ['mogulgame', 'transactions'] as const,
+  /** Cache key for leaderboard. */
+  leaderboard: (sortBy: string) =>
+    ['mogulgame', 'leaderboard', sortBy] as const,
 } as const;

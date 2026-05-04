@@ -6,7 +6,7 @@
       "name": "@sudobility/starter_client",
       "devDependencies": {
         "@eslint/js": "^9.38.0",
-        "@sudobility/starter_types": "^0.0.13",
+        "@sudobility/mogulgame_types": "^0.0.14",
         "@sudobility/types": "^1.9.61",
         "@tanstack/react-query": "^5.90.5",
         "@types/react": "^19.2.2",
@@ -163,7 +163,7 @@
 
     "@standard-schema/spec": ["@standard-schema/spec@1.1.0", "", {}, "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="],
 
-    "@sudobility/starter_types": ["@sudobility/starter_types@0.0.13", "", { "peerDependencies": { "@sudobility/types": "^1.9.61" } }, "sha512-jPGZZnYOfLIKefnSlHr3huXNT+lQvDmp/1QsOvP/Djlwl92t9Cg4wc8KOvSJuNtRQyhkdiWSP+5PbjeN576rHw=="],
+    "@sudobility/mogulgame_types": ["@sudobility/mogulgame_types@0.0.14", "", { "peerDependencies": { "@sudobility/types": "^1.9.61" } }, "sha512-KokgwVZsyYVINGkvHXtnTcaUwgmrVvEVyUqmXAiRFtN9dNC55CGMTCsEnZ1ohUQqvq9unMrm2TliEwjkb9RjCw=="],
 
     "@sudobility/types": ["@sudobility/types@1.9.61", "", {}, "sha512-SODGpstB/iKfK3H/4BvJx/FBcc1h3gutUjGotyxN19VnOfWyzaDoEmW7eyoxOAYhZyXMXagSiii+NIEZvuxKog=="],
 
