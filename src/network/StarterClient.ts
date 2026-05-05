@@ -1,10 +1,6 @@
 import type { NetworkClient } from '@sudobility/types';
 import type {
   BaseResponse,
-  History,
-  HistoryCreateRequest,
-  HistoryTotalResponse,
-  HistoryUpdateRequest,
   LeaderboardResponse,
   PretendOffer,
   PretendOfferCreateRequest,
@@ -70,9 +66,6 @@ function validateResponse<T>(
  *
  * // Fetch user profile
  * const user = await client.getUser(userId, idToken);
- *
- * // Fetch all histories
- * const histories = await client.getHistories(userId, idToken);
  * ```
  */
 export class StarterClient {
@@ -120,153 +113,6 @@ export class StarterClient {
       timeout: options?.timeout,
     });
     return validateResponse<User>(response.data, 'getUser');
-  }
-
-  // --- Histories ---
-
-  /**
-   * Fetches all histories for a user.
-   *
-   * @param userId - The Firebase UID of the user whose histories to fetch
-   * @param token - A valid Firebase ID token for authentication
-   * @returns The list of histories wrapped in a {@link BaseResponse}
-   * @throws {Error} If the response does not match the expected shape
-   *
-   * @example
-   * ```typescript
-   * const response = await client.getHistories('user-123', idToken);
-   * if (response.success && response.data) {
-   *   response.data.forEach(history => console.log(history.value));
-   * }
-   * ```
-   */
-  async getHistories(
-    userId: string,
-    token: FirebaseIdToken,
-    options?: { timeout?: number }
-  ): Promise<BaseResponse<History[]>> {
-    const url = buildUrl(this.baseUrl, `/api/v1/users/${userId}/histories`);
-    const response = await this.networkClient.get(url, {
-      headers: createAuthHeaders(token),
-      timeout: options?.timeout,
-    });
-    return validateResponse<History[]>(response.data, 'getHistories');
-  }
-
-  /**
-   * Creates a new history entry for a user.
-   *
-   * @param userId - The Firebase UID of the user
-   * @param data - The history data to create
-   * @param token - A valid Firebase ID token for authentication
-   * @returns The created history wrapped in a {@link BaseResponse}
-   * @throws {Error} If the response does not match the expected shape
-   *
-   * @example
-   * ```typescript
-   * const response = await client.createHistory('user-123', {
-   *   datetime: '2024-01-01T00:00:00Z',
-   *   value: 100,
-   * }, idToken);
-   * ```
-   */
-  async createHistory(
-    userId: string,
-    data: HistoryCreateRequest,
-    token: FirebaseIdToken,
-    options?: { timeout?: number }
-  ): Promise<BaseResponse<History>> {
-    const url = buildUrl(this.baseUrl, `/api/v1/users/${userId}/histories`);
-    const response = await this.networkClient.post(url, data, {
-      headers: createAuthHeaders(token),
-      timeout: options?.timeout,
-    });
-    return validateResponse<History>(response.data, 'createHistory');
-  }
-
-  /**
-   * Updates an existing history entry.
-   *
-   * @param userId - The Firebase UID of the user
-   * @param historyId - The ID of the history to update
-   * @param data - The fields to update on the history
-   * @param token - A valid Firebase ID token for authentication
-   * @returns The updated history wrapped in a {@link BaseResponse}
-   * @throws {Error} If the response does not match the expected shape
-   *
-   * @example
-   * ```typescript
-   * const response = await client.updateHistory('user-123', 'hist-456', {
-   *   value: 200,
-   * }, idToken);
-   * ```
-   */
-  async updateHistory(
-    userId: string,
-    historyId: string,
-    data: HistoryUpdateRequest,
-    token: FirebaseIdToken,
-    options?: { timeout?: number }
-  ): Promise<BaseResponse<History>> {
-    const url = buildUrl(
-      this.baseUrl,
-      `/api/v1/users/${userId}/histories/${historyId}`
-    );
-    const response = await this.networkClient.put(url, data, {
-      headers: createAuthHeaders(token),
-      timeout: options?.timeout,
-    });
-    return validateResponse<History>(response.data, 'updateHistory');
-  }
-
-  /**
-   * Deletes a history entry.
-   *
-   * @param userId - The Firebase UID of the user
-   * @param historyId - The ID of the history to delete
-   * @param token - A valid Firebase ID token for authentication
-   * @returns A null response wrapped in a {@link BaseResponse}
-   * @throws {Error} If the response does not match the expected shape
-   *
-   * @example
-   * ```typescript
-   * const response = await client.deleteHistory('user-123', 'hist-456', idToken);
-   * if (response.success) {
-   *   console.log('History deleted');
-   * }
-   * ```
-   */
-  async deleteHistory(
-    userId: string,
-    historyId: string,
-    token: FirebaseIdToken,
-    options?: { timeout?: number }
-  ): Promise<BaseResponse<null>> {
-    const url = buildUrl(
-      this.baseUrl,
-      `/api/v1/users/${userId}/histories/${historyId}`
-    );
-    const response = await this.networkClient.delete(url, {
-      headers: createAuthHeaders(token),
-      timeout: options?.timeout,
-    });
-    return validateResponse<null>(response.data, 'deleteHistory');
-  }
-
-  // --- Total (public) ---
-
-  async getHistoriesTotal(options?: {
-    timeout?: number;
-  }): Promise<BaseResponse<HistoryTotalResponse>> {
-    const url = buildUrl(this.baseUrl, '/api/v1/histories/total');
-    const response = await this.networkClient.get(url, {
-      headers: createHeaders(),
-      timeout: options?.timeout,
-    });
-    return validateResponse<HistoryTotalResponse>(
-      response.data,
-      'getHistoriesTotal'
-    );
   }
 
   // --- Properties (public) ---

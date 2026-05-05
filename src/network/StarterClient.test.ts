@@ -77,101 +77,15 @@ describe('StarterClient', () => {
     });
   });
 
-  describe('getHistories', () => {
-    it('should call GET with correct URL', async () => {
-      await client.getHistories('user-123', 'token-abc');
-      expect(mockNetworkClient.get).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/users/user-123/histories',
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: 'Bearer token-abc',
-          }),
-        })
-      );
-    });
-  });
-
-  describe('createHistory', () => {
-    it('should call POST with correct URL and body', async () => {
-      const data = { datetime: '2024-01-01T00:00:00Z', value: 100 };
-      await client.createHistory('user-123', data, 'token-abc');
-      expect(mockNetworkClient.post).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/users/user-123/histories',
-        data,
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: 'Bearer token-abc',
-          }),
-        })
-      );
-    });
-  });
-
-  describe('updateHistory', () => {
-    it('should call PUT with correct URL and body', async () => {
-      const data = { value: 200 };
-      await client.updateHistory('user-123', 'hist-456', data, 'token-abc');
-      expect(mockNetworkClient.put).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/users/user-123/histories/hist-456',
-        data,
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: 'Bearer token-abc',
-          }),
-        })
-      );
-    });
-  });
-
-  describe('deleteHistory', () => {
-    it('should call DELETE with correct URL', async () => {
-      await client.deleteHistory('user-123', 'hist-456', 'token-abc');
-      expect(mockNetworkClient.delete).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/users/user-123/histories/hist-456',
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            Authorization: 'Bearer token-abc',
-          }),
-        })
-      );
-    });
-  });
-
-  describe('getHistoriesTotal', () => {
-    it('should call GET with correct URL without auth', async () => {
-      await client.getHistoriesTotal();
-      expect(mockNetworkClient.get).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/histories/total',
-        expect.objectContaining({
-          headers: expect.not.objectContaining({
-            Authorization: expect.any(String),
-          }),
-        })
-      );
-    });
-
-    it('should include Content-Type header', async () => {
-      await client.getHistoriesTotal();
-      expect(mockNetworkClient.get).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            'Content-Type': 'application/json',
-          }),
-        })
-      );
-    });
-  });
-
   describe('URL construction', () => {
     it('should strip trailing slash from baseUrl', async () => {
       const trailingSlashClient = new StarterClient({
         baseUrl: 'https://api.example.com/',
         networkClient: mockNetworkClient,
       });
-      await trailingSlashClient.getHistoriesTotal();
+      await trailingSlashClient.getUser('user-123', 'token');
       expect(mockNetworkClient.get).toHaveBeenCalledWith(
-        'https://api.example.com/api/v1/histories/total',
+        'https://api.example.com/api/v1/users/user-123',
         expect.any(Object)
       );
     });
@@ -181,15 +95,21 @@ describe('StarterClient', () => {
     it('should accept valid BaseResponse with success: true', async () => {
       const validResponse = {
         success: true,
-        data: { total: 42 },
+        data: {
+          firebase_uid: 'user-123',
+          email: 'test@example.com',
+          display_name: 'Test',
+          created_at: null,
+          updated_at: null,
+        },
         timestamp: '2024-01-01T00:00:00Z',
       };
       mockNetworkClient = createMockNetworkClient(validResponse);
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      const result = await client.getHistoriesTotal();
+      const result = await client.getUser('user-123', 'token');
       expect(result.success).toBe(true);
-      expect(result.data!.total).toBe(42);
+      expect(result.data!.firebase_uid).toBe('user-123');
     });
 
     it('should accept valid BaseResponse with success: false', async () => {
@@ -201,7 +121,7 @@ describe('StarterClient', () => {
       mockNetworkClient = createMockNetworkClient(errorResponse);
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      const result = await client.getHistoriesTotal();
+      const result = await client.getUser('user-123', 'token');
       expect(result.success).toBe(false);
       expect(result.error).toBe('Not found');
     });
@@ -210,8 +130,8 @@ describe('StarterClient', () => {
       mockNetworkClient = createMockNetworkClient(null);
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      await expect(client.getHistoriesTotal()).rejects.toThrow(
-        'Invalid API response for getHistoriesTotal'
+      await expect(client.getUser('user-123', 'token')).rejects.toThrow(
+        'Invalid API response for getUser'
       );
     });
 
@@ -219,8 +139,8 @@ describe('StarterClient', () => {
       mockNetworkClient = createMockNetworkClient('raw string');
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      await expect(client.getHistoriesTotal()).rejects.toThrow(
-        'Invalid API response for getHistoriesTotal'
+      await expect(client.getUser('user-123', 'token')).rejects.toThrow(
+        'Invalid API response for getUser'
       );
     });
 
@@ -228,8 +148,8 @@ describe('StarterClient', () => {
       mockNetworkClient = createMockNetworkClient({ data: 'some data' });
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      await expect(client.getHistoriesTotal()).rejects.toThrow(
-        'Invalid API response for getHistoriesTotal'
+      await expect(client.getUser('user-123', 'token')).rejects.toThrow(
+        'Invalid API response for getUser'
       );
     });
 
@@ -237,8 +157,8 @@ describe('StarterClient', () => {
       mockNetworkClient = createMockNetworkClient({ success: 'yes', data: {} });
       client = new StarterClient({ baseUrl, networkClient: mockNetworkClient });
 
-      await expect(client.getHistoriesTotal()).rejects.toThrow(
-        'Invalid API response for getHistoriesTotal'
+      await expect(client.getUser('user-123', 'token')).rejects.toThrow(
+        'Invalid API response for getUser'
       );
     });
   });

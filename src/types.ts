@@ -35,17 +35,10 @@ export const DEFAULT_GC_TIME = 30 * 60 * 1000;
  * import { QUERY_KEYS } from '@sudobility/mogulgame_client';
  *
  * // Manual invalidation
- * queryClient.invalidateQueries({ queryKey: QUERY_KEYS.histories(userId) });
- *
- * // Prefetching
- * queryClient.prefetchQuery({ queryKey: QUERY_KEYS.historiesTotal() });
+ * queryClient.invalidateQueries({ queryKey: QUERY_KEYS.user(userId) });
  * ```
  */
 export const QUERY_KEYS = {
-  /** Cache key for a user's history list. */
-  histories: (userId: string) => ['mogulgame', 'histories', userId] as const,
-  /** Cache key for the global histories total (public endpoint). */
-  historiesTotal: () => ['mogulgame', 'histories', 'total'] as const,
   /** Cache key for a user profile. */
   user: (userId: string) => ['mogulgame', 'user', userId] as const,
   /** Cache key for property search results. */
