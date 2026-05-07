@@ -14,3 +14,7 @@ export {
   type UseTransactionsReturn,
 } from './useUserProfile';
 export { useLeaderboard, type UseLeaderboardReturn } from './useLeaderboard';
+export {
+  usePopularProperties,
+  type UsePopularPropertiesReturn,
+} from './usePopularProperties';

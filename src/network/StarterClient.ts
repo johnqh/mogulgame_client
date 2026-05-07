@@ -8,6 +8,7 @@ import type {
   Property,
   PropertyPriceHistoryResponse,
   PropertySearchResponse,
+  PropertyViewsResponse,
   Transaction,
   User,
   UserProfile,
@@ -272,5 +273,20 @@ export class StarterClient {
       response.data,
       'getLeaderboard'
     );
+  }
+
+  // --- Popular Properties (public) ---
+
+  async getPopularProperties(
+    params?: Record<string, string>,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PropertyViewsResponse>> {
+    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+    const url = buildUrl(this.baseUrl, `/api/v1/views/popular${query}`);
+    const response = await this.networkClient.get(url, {
+      headers: createHeaders(),
+      timeout: options?.timeout,
+    });
+    return validateResponse(response.data, 'getPopularProperties');
   }
 }
