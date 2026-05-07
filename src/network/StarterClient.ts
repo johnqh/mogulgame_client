@@ -6,6 +6,7 @@ import type {
   PretendOfferCreateRequest,
   PretendOfferUpdateRequest,
   Property,
+  PropertyFavoritesResponse,
   PropertyPriceHistoryResponse,
   PropertySearchResponse,
   PropertyViewsResponse,
@@ -288,5 +289,67 @@ export class StarterClient {
       timeout: options?.timeout,
     });
     return validateResponse(response.data, 'getPopularProperties');
+  }
+
+  // --- Favorites (auth required) ---
+
+  async favoriteProperty(
+    propertyId: string,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<{ favorited: boolean }>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/favorites/${propertyId}`);
+    const response = await this.networkClient.post(
+      url,
+      {},
+      {
+        headers: createAuthHeaders(token),
+        timeout: options?.timeout,
+      }
+    );
+    return validateResponse(response.data, 'favoriteProperty');
+  }
+
+  async unfavoriteProperty(
+    propertyId: string,
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<{ favorited: boolean }>> {
+    const url = buildUrl(this.baseUrl, `/api/v1/favorites/${propertyId}`);
+    const response = await this.networkClient.delete(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse(response.data, 'unfavoriteProperty');
+  }
+
+  async getFavorites(
+    token: FirebaseIdToken,
+    params?: Record<string, string>,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<PropertyFavoritesResponse>> {
+    const query = params ? `?${new URLSearchParams(params).toString()}` : '';
+    const url = buildUrl(this.baseUrl, `/api/v1/favorites${query}`);
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse(response.data, 'getFavorites');
+  }
+
+  async checkFavorites(
+    propertyIds: string[],
+    token: FirebaseIdToken,
+    options?: { timeout?: number }
+  ): Promise<BaseResponse<{ favorites: Record<string, boolean> }>> {
+    const url = buildUrl(
+      this.baseUrl,
+      `/api/v1/favorites/check?property_ids=${propertyIds.join(',')}`
+    );
+    const response = await this.networkClient.get(url, {
+      headers: createAuthHeaders(token),
+      timeout: options?.timeout,
+    });
+    return validateResponse(response.data, 'checkFavorites');
   }
 }

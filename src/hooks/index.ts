@@ -18,3 +18,9 @@ export {
   usePopularProperties,
   type UsePopularPropertiesReturn,
 } from './usePopularProperties';
+export {
+  useFavorites,
+  useFavoriteCheck,
+  type UseFavoritesReturn,
+  type UseFavoriteCheckReturn,
+} from './useFavorites';

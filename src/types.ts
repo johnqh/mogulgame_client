@@ -64,4 +64,9 @@ export const QUERY_KEYS = {
   /** Cache key for popular properties. */
   popularProperties: (sortBy: string, page: number) =>
     ['mogulgame', 'popular', sortBy, page] as const,
+  /** Cache key for user's favorites. */
+  favorites: () => ['mogulgame', 'favorites'] as const,
+  /** Cache key for checking if properties are favorited. */
+  favoritesCheck: (propertyIds: string) =>
+    ['mogulgame', 'favorites', 'check', propertyIds] as const,
 } as const;
