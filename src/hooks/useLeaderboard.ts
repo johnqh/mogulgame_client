@@ -18,6 +18,7 @@ export interface UseLeaderboardReturn {
 export const useLeaderboard = (
   networkClient: NetworkClient,
   baseUrl: string,
+  country: string,
   sortBy: 'balance' | 'wins' = 'balance',
   options?: { enabled?: boolean; page?: number; limit?: number }
 ): UseLeaderboardReturn => {
@@ -27,12 +28,12 @@ export const useLeaderboard = (
   );
 
   const enabled = options?.enabled ?? true;
-  const params: Record<string, string> = { sort_by: sortBy };
+  const params: Record<string, string> = { sort_by: sortBy, country };
   if (options?.page) params.page = String(options.page);
   if (options?.limit) params.limit = String(options.limit);
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: QUERY_KEYS.leaderboard(sortBy),
+    queryKey: QUERY_KEYS.leaderboard(sortBy, country),
     queryFn: async () => {
       const response = await client.getLeaderboard(params);
       if (!response.success || !response.data) {

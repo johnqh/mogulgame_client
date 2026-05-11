@@ -59,8 +59,8 @@ export const QUERY_KEYS = {
   /** Cache key for user transactions. */
   transactions: () => ['mogulgame', 'transactions'] as const,
   /** Cache key for leaderboard. */
-  leaderboard: (sortBy: string) =>
-    ['mogulgame', 'leaderboard', sortBy] as const,
+  leaderboard: (sortBy: string, country: string) =>
+    ['mogulgame', 'leaderboard', sortBy, country] as const,
   /** Cache key for popular properties. */
   popularProperties: (sortBy: string, page: number) =>
     ['mogulgame', 'popular', sortBy, page] as const,
