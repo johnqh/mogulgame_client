@@ -67,7 +67,7 @@ export const useProperty = (
   networkClient: NetworkClient,
   baseUrl: string,
   propertyId: string | null,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; crawler?: boolean }
 ): UsePropertyReturn => {
   const client = useMemo(
     () => new StarterClient({ baseUrl, networkClient }),
@@ -79,7 +79,9 @@ export const useProperty = (
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: QUERY_KEYS.property(propertyId ?? ''),
     queryFn: async () => {
-      const response = await client.getProperty(propertyId!);
+      const response = await client.getProperty(propertyId!, {
+        crawler: options?.crawler,
+      });
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to fetch property');
       }
@@ -112,7 +114,7 @@ export const usePropertyHistory = (
   networkClient: NetworkClient,
   baseUrl: string,
   propertyId: string | null,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean; crawler?: boolean }
 ): UsePropertyHistoryReturn => {
   const client = useMemo(
     () => new StarterClient({ baseUrl, networkClient }),
@@ -124,7 +126,9 @@ export const usePropertyHistory = (
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: QUERY_KEYS.propertyHistory(propertyId ?? ''),
     queryFn: async () => {
-      const response = await client.getPropertyHistory(propertyId!);
+      const response = await client.getPropertyHistory(propertyId!, {
+        crawler: options?.crawler,
+      });
       if (!response.success || !response.data) {
         throw new Error(response.error || 'Failed to fetch price history');
       }
