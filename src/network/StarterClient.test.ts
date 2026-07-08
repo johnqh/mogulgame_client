@@ -162,4 +162,44 @@ describe('StarterClient', () => {
       );
     });
   });
+
+  describe('crawler option', () => {
+    it('appends crawler=true to getProperty when set', async () => {
+      await client.getProperty('prop-1', { crawler: true });
+      expect(mockNetworkClient.get).toHaveBeenCalledWith(
+        'https://api.example.com/api/v1/properties/prop-1?crawler=true',
+        expect.anything()
+      );
+    });
+
+    it('omits the param from getProperty when unset or false', async () => {
+      await client.getProperty('prop-1');
+      expect(mockNetworkClient.get).toHaveBeenCalledWith(
+        'https://api.example.com/api/v1/properties/prop-1',
+        expect.anything()
+      );
+
+      await client.getProperty('prop-1', { crawler: false });
+      expect(mockNetworkClient.get).toHaveBeenLastCalledWith(
+        'https://api.example.com/api/v1/properties/prop-1',
+        expect.anything()
+      );
+    });
+
+    it('appends crawler=true to getPropertyHistory when set', async () => {
+      await client.getPropertyHistory('prop-1', { crawler: true });
+      expect(mockNetworkClient.get).toHaveBeenCalledWith(
+        'https://api.example.com/api/v1/properties/prop-1/history?crawler=true',
+        expect.anything()
+      );
+    });
+
+    it('omits the param from getPropertyHistory when unset', async () => {
+      await client.getPropertyHistory('prop-1');
+      expect(mockNetworkClient.get).toHaveBeenCalledWith(
+        'https://api.example.com/api/v1/properties/prop-1/history',
+        expect.anything()
+      );
+    });
+  });
 });

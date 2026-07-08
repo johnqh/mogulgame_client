@@ -137,9 +137,13 @@ export class StarterClient {
 
   async getProperty(
     propertyId: string,
-    options?: { timeout?: number }
+    options?: { timeout?: number; crawler?: boolean }
   ): Promise<BaseResponse<Property>> {
-    const url = buildUrl(this.baseUrl, `/api/v1/properties/${propertyId}`);
+    const query = options?.crawler ? '?crawler=true' : '';
+    const url = buildUrl(
+      this.baseUrl,
+      `/api/v1/properties/${propertyId}${query}`
+    );
     const response = await this.networkClient.get(url, {
       headers: createHeaders(),
       timeout: options?.timeout,
@@ -149,11 +153,12 @@ export class StarterClient {
 
   async getPropertyHistory(
     propertyId: string,
-    options?: { timeout?: number }
+    options?: { timeout?: number; crawler?: boolean }
   ): Promise<BaseResponse<PropertyPriceHistoryResponse>> {
+    const query = options?.crawler ? '?crawler=true' : '';
     const url = buildUrl(
       this.baseUrl,
-      `/api/v1/properties/${propertyId}/history`
+      `/api/v1/properties/${propertyId}/history${query}`
     );
     const response = await this.networkClient.get(url, {
       headers: createHeaders(),
