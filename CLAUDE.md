@@ -1,5 +1,10 @@
 # MogulGame Client
 
+> **Git policy — never auto-commit or auto-push.** Leave your work in the working tree.
+> Run `git commit`, `git push`, `gh pr create`, or `scripts/push_all.sh` **only when the user
+> explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
+> finishing a task is not permission to commit it.
+
 API client SDK for MogulGame with TanStack Query hooks.
 
 **npm**: `@sudobility/mogulgame_client` (public, BUSL-1.1)
@@ -133,3 +138,7 @@ app that is `FirebaseAuthNetworkService` (from `@sudobility/auth_lib`) extending
 - `handleApiError` is exported and tested but has **no production call sites**
 - `mogulgame_app` bypasses this SDK for favorites, popular properties, transactions, and searches -- it hand-rolls those calls. Prefer wiring pages to the hooks rather than adding more raw calls
 - This is a published npm package -- breaking changes require version bumps and coordination with consumers. Editing `src/` has **no effect** on `mogulgame_app` until published and the dep bumped; use `bun link` for local iteration
+
+## Git Workflow
+
+- Do not use feature branches for code changes. Always stay on the current branch.
