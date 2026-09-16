@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/mogulgame_client",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "description": "Client library for Starter API with TanStack Query hooks",
   "type": "module",
   "main": "dist/index.js",
@@ -21,9 +21,9 @@
     "lint:fix": "bunx eslint src/ --fix",
     "format": "bunx prettier --write \"src/**/*.ts\"",
     "format:check": "bunx prettier --check \"src/**/*.ts\"",
-    "test": "vitest run",
+    "test:unit": "vitest run",
     "test:watch": "vitest",
-    "verify": "bun run typecheck && bun run test && bun run build"
+    "verify": "bun run typecheck && bun run test:unit && bun run build"
   },
   "keywords": [
     "mogulgame",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@sudobility/mogulgame_types": "^0.0.23",
+    "@sudobility/mogulgame_types": "^0.0.24",
     "@sudobility/types": "^1.9.67",
     "@tanstack/react-query": "^5.90.5",
     "@types/react": "^19.2.2",
